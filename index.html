@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare your ESNs</title>
+</head>
+
+<body>
+
+    <input type="file" id="uploadfile" accept=".csv">
+    <input type="file" id="uploadfile2" accept=".csv">
+    <button id="uploadconfirm">upload FC File</button>
+    <button onclick="location.reload()">Refresh</button>
+
+    <div id="mainPage"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.1/papaparse.min.js"></script>
+    <script>
+        const mainPage = document.getElementById('mainPage')
+        let fleetCareData = [];
+        let superLibraData = [];
+        let finalMatch = [];
+        const uploadconfirm = document.getElementById('uploadconfirm').addEventListener('click', () => {
+            Papa.parse(document.getElementById('uploadfile').files[0],
+                {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function (results) {
+
+                        for (i = 0; i < results.data.length; i++) {
+                            fleetCareData.push(results.data[i].ESN)
+                        };
+                        console.log(fleetCareData);
+
+                    }
+                }
+
+            );
+            Papa.parse(document.getElementById('uploadfile2').files[0],
+                {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function (results) {
+                        for (i = 0; i < results.data.length; i++) {
+                            superLibraData.push(results.data[i].ESN)
+                        };
+                        console.log(superLibraData);
+
+                    }
+                }
+
+            );
+            setTimeout(function () {
+                comparedata(superLibraData, fleetCareData);
+            }, 1000);
+        });
+
+
+
+
+
+
+
+        function comparedata(array1, array2) {
+            for (i = 0; i < array1.length; i++) {
+
+                if (!array2.includes(array1[i])) {
+                    finalMatch.push(array1[i]);
+
+                    // we need to put this outside of this fucntion and than loop through it
+
+
+                } else {
+                    console.log("False")
+                }
+            };
+
+            for (i = 0; i < array2.length; i++) {
+                if (!array1.includes(array2[i])) {
+                    finalMatch.push(array2[i]);
+
+                } else {
+                    console.log("False")
+                }
+            };
+            console.log(finalMatch);
+            for (i = 0; i < finalMatch.length; i++) {
+                var line = document.createElement("p");
+                line.innerHTML = finalMatch[i];
+                mainPage.appendChild(line);
+
+            }
+
+        };
+    </script>
+</body>
+
+</html>
